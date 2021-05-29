@@ -1,0 +1,229 @@
+// Gabriel Moreira Silva 
+// RA: 19.00397-8
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct No{
+    int num;
+    struct No *prox;
+};typedef struct No no;
+
+int tam;
+
+void inicia(no *LISTA);
+int menu(void);
+void opcao(no *LISTA, int op);
+no *criaNo();
+void insereFim(no *LISTA);
+void insereInicio(no *LISTA);
+void exibe(no *LISTA);
+void libera(no *LISTA);
+void insere (no *LISTA);
+no *retiraInicio(no *LISTA);
+no *retiraFim(no *LISTA);
+no *retira(no *LISTA);
+
+
+int main(){
+    no *LISTA = (no *) malloc(sizeof(no));
+    if(!LISTA){
+        printf("Sem memoria disponivel!\n");
+        exit(1);
+    }
+
+    else{
+        inicia(LISTA);
+        int op;
+
+        do{
+            op = menu();
+            opcao(LISTA,op);
+        }while(op);
+
+        free(LISTA);
+        return 0;
+    }
+}
+
+void inicia(no *LISTA){
+    LISTA->prox = NULL;
+    tam=0;
+}
+
+int menu(void){
+    int op;
+
+    printf("Escolha a opcao: \n");
+    printf("0. Sair\n");
+    printf("1. Zerar lista\n");
+    printf("2. Exibir lista\n");
+    printf("3. Adicionar no inicio\n");
+    printf("4. Adicionar no final\n");
+    printf("5. Retirar do inicio\n");
+    printf("6. Retirar do fim\n");
+    printf("\n");
+    printf("Opcao: ");
+    scanf("%d", &op);
+
+    return op;
+}
+
+void opcao(no *LISTA, int op){
+    system("cls");
+    no *tmp;
+
+    switch(op){
+    case 0:
+        libera(LISTA);
+        break;
+
+    case 1:
+        libera(LISTA);
+        inicia(LISTA);
+        break;
+
+    case 2:
+        exibe(LISTA);
+        break;
+
+    case 3:
+        insereInicio(LISTA);
+        break;
+
+    case 4:
+        insereFim(LISTA);
+        break;
+
+    case 5:
+        tmp= retiraInicio(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    case 6:
+        tmp= retiraFim(LISTA);
+        printf("Retirado: %3d\n\n", tmp->num);
+        break;
+
+    default:
+        printf("Opcao invalido\n\n");
+    }
+}
+
+int vazia(no *LISTA){
+    if(LISTA->prox == NULL)
+        return 1;
+    else
+        return 0;
+}
+
+no *aloca(){
+    no *novo=(no *) malloc(sizeof(no));
+
+    if(!novo){
+        printf("Sem memoria disponivel!\n");
+        exit(1);
+    }
+
+    else{
+        printf("Novo elemento: ");
+        scanf("%d", &novo->num);
+        return novo;
+    }
+}
+
+void insereFim(no *LISTA){
+    no *novo=aloca();
+    novo->prox = NULL;
+
+    if(vazia(LISTA))
+        LISTA->prox=novo;
+
+    else{
+        no *tmp = LISTA->prox;
+
+        while(tmp->prox != NULL)
+            tmp = tmp->prox;
+
+        tmp->prox = novo;
+    }
+    tam++;
+}
+
+void insereInicio(no *LISTA){
+    no *novo=aloca();
+    no *oldHead = LISTA->prox;
+
+    LISTA->prox = novo;
+    novo->prox = oldHead;
+
+    tam++;
+}
+
+void exibe(no *LISTA){
+    system("cls");
+
+    if(vazia(LISTA)){
+        printf("Lista vazia!\n\n");
+        return ;
+    }
+
+    no *tmp;
+    tmp = LISTA->prox;
+    printf("Lista:");
+
+    while( tmp != NULL){
+        printf("%5d", tmp->num);
+        tmp = tmp->prox;
+    }
+    printf("\n\n");
+}
+
+void libera(no *LISTA){
+    if(!vazia(LISTA)){
+        no *proxNo,
+        *atual;
+        atual = LISTA->prox;
+
+        while(atual != NULL){
+            proxNo = atual->prox;
+            free(atual);
+            atual = proxNo;
+        }
+    }
+}
+
+no *retiraInicio(no *LISTA){
+    if(LISTA->prox == NULL){
+        printf("Lista ja esta vazia\n");
+        return NULL;
+    }
+
+    else{
+        no *tmp = LISTA->prox;
+        LISTA->prox = tmp->prox;
+        tam--;
+        return tmp;
+    }
+}
+
+no *retiraFim(no *LISTA){
+    if(LISTA->prox == NULL){
+        printf("Lista ja vazia\n\n");
+        return NULL;
+    }
+
+    else{
+        no *ultimo = LISTA->prox,
+            *penultimo = LISTA;
+
+        while(ultimo->prox != NULL){
+            penultimo = ultimo;
+            ultimo = ultimo->prox;
+        }
+
+        penultimo->prox = NULL;
+        tam--;
+        return ultimo;
+    }
+}
